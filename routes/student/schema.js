@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 const profileSchema = Joi.object({
   _id: Joi.string(),
-  sid: Joi.string(),
+  uid: Joi.string(),
   name: Joi.string().required(),
   gender: Joi.any(),
   birthDay: Joi.string().required(),

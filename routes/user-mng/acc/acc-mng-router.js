@@ -33,7 +33,7 @@ router.post("/signup", async (req, res) => {
     const result = await col.insertOne(req.body);
 
     //send back token
-    const token = jwt.sign({ _id: result.insertedId, role: req.body.role }, process.env.TOKEN_SECRET);
+    const token = jwt.sign({ uid: result.insertedId, role: req.body.role }, process.env.TOKEN_SECRET);
     res.json({ role: req.body.role, token: token });
   } catch (error) {
     console.log(error);
@@ -62,7 +62,7 @@ router.post("/signin", upload.none(), async (req, res) => {
     if (!bcrypt.compareSync(req.body.password, acc.hashedPassword)) return res.status(400).json({ password: "Incorrect password!" });
 
     // send back a token
-    const token = jwt.sign({ _id: acc._id, role: acc.role }, process.env.TOKEN_SECRET);
+    const token = jwt.sign({ uid: acc._id, role: acc.role }, process.env.TOKEN_SECRET);
     res.json({ role: acc.role, token: token });
   } catch (error) {
     console.log(error);
