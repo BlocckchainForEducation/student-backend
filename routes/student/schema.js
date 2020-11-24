@@ -13,6 +13,7 @@ const profileSchema = Joi.object({
   address: Joi.string(),
   description: Joi.string().max(1000),
   imgSrc: Joi.string(),
+  level: Joi.string(),
 });
 
 module.exports = { profileSchema };
