@@ -31,4 +31,14 @@ router.post("/sawtooth-accounts", authen, author(ROLE.STUDENT), async (req, res)
   }
 });
 
+router.delete("/sawtooth-accounts", authen, author(ROLE.STUDENT), async (req, res) => {
+  try {
+    const col = (await connection).db(DB_NAME).collection(COLL_NAME);
+    const opResult = await col.deleteOne({ uid: req.user.uid, publicKey: req.body.publicKey });
+    res.json(opResult.result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 module.exports = router;
