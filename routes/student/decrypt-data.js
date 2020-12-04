@@ -3,6 +3,24 @@ const router = express.Router();
 const { authen, author } = require("../user-mng/permission/protect-middleware");
 const { ROLE } = require("../user-mng/role");
 
+router.post("/decrypt-data", authen, author(ROLE.STUDENT), async (req, res) => {
+  try {
+    const body = req.body;
+    const privateKey = body.privateKey;
+    const encryptedCert = body.certificate;
+    const encryptedSubjectList = body.subjectPointList;
+    // if (!privateKey || !encryptedCert || !encryptedSubjectList) {
+    //   return res.status(400).json("bad request, check post data: privatekey, encrpyt cert, encrpyt subject list");
+    // }
+    const decryptedCert = decryptCert(privateKey, encryptedCert);
+    const decryptedSubjectList = decryptSubjectList(privateKey, encryptedSubjectList);
+    res.json({ decrytedData: { certificate: decryptedCert, subjectPointList: decryptedSubjectList } });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// TODO: decrypt real data
 function decryptCert(privateKey, encryptedCert) {
   return {
     name: "Nguyễn Văn An",
@@ -22,6 +40,7 @@ function decryptCert(privateKey, encryptedCert) {
   };
 }
 
+// TODO: decrypt real data
 function decryptSubjectList(privateKey, encryptedSubjectList) {
   return [
     {
@@ -62,22 +81,5 @@ function decryptSubjectList(privateKey, encryptedSubjectList) {
     },
   ];
 }
-
-router.post("/decrypt-data", async (req, res) => {
-  try {
-    const body = req.body;
-    const privateKey = body.privateKey;
-    const encryptedCert = body.certificate;
-    const encryptedSubjectList = body.subjectPointList;
-    // if (!privateKey || !encryptedCert || !encryptedSubjectList) {
-    //   return res.status(400).json("bad request, check post data: privatekey, encrpyt cert, encrpyt subject list");
-    // }
-    const decryptedCert = decryptCert(privateKey, encryptedCert);
-    const decryptedSubjectList = decryptSubjectList(privateKey, encryptedSubjectList);
-    res.json({ decrytedData: { certificate: decryptedCert, subjectPointList: decryptedSubjectList } });
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
 
 module.exports = router;
