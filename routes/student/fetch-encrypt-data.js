@@ -6,8 +6,8 @@ const sawtoothCli = require("./sawtooth-cli");
 
 router.get("/encrypted-data", authen, author(ROLE.STUDENT), async (req, res) => {
   try {
-    const publicKey = req.publicKey;
-    const encryptData = await sawtoothCli.fetchEncryptDataOfAccount(publicKey);
+    const publicKeyHex = req.query.publicKeyHex;
+    const encryptData = await sawtoothCli.fetchEncryptDataOfAccount(publicKeyHex);
     res.json(encryptData);
   } catch (error) {
     res.status(500).json(error);
