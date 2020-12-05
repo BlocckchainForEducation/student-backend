@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const connection = require("../../../db");
+const connection = require("../../db");
 const ACC_COLL_NAME = "Account";
 const { signUpSchema, signInSchema } = require("./schema");
 const multer = require("multer");

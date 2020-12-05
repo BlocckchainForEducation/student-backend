@@ -2,16 +2,14 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const upload = multer();
-const { authen, author } = require("../../user-mng/permission/protect-middleware");
-const { ROLE } = require("../../user-mng/role");
-const connection = require("../../../db");
-const { DB_NAME } = require("../../../constance");
+const { authen } = require("../acc/protect-middleware");
+const connection = require("../../db");
 const PROFILE = "Profile";
 const { profileSchema } = require("./schema");
 
 router.get("/profile", authen, async (req, res) => {
   try {
-    const col = (await connection).db(DB_NAME).collection(PROFILE);
+    const col = (await connection).db().collection(PROFILE);
     const profile = await col.findOne({ uid: req.user.uid });
     res.json(profile);
   } catch (err) {
@@ -30,7 +28,7 @@ router.post("/profile", authen, async (req, res) => {
       return res.status(400).json(errors);
     }
 
-    const col = (await connection).db(DB_NAME).collection(PROFILE);
+    const col = (await connection).db().collection(PROFILE);
     // replaceOne not allow mutate _id
     delete req.body._id;
     req.body.uid = req.user.uid;
@@ -43,7 +41,7 @@ router.post("/profile", authen, async (req, res) => {
 
 router.post("/change-avatar", authen, upload.single("avatar"), async (req, res) => {
   try {
-    const col = (await connection).db(DB_NAME).collection(PROFILE);
+    const col = (await connection).db().collection(PROFILE);
     const imgBase64 = req.file.buffer.toString("base64");
     const imgSrc = `data:${req.file.mimetype};base64,${imgBase64}`;
     const opResult = await col.updateOne({ uid: req.user.uid }, { $set: { imgSrc: imgSrc } }, { upsert: true });

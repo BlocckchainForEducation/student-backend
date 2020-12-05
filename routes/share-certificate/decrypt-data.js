@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { authen } = require("../../user-mng/permission/protect-middleware");
+const { authen } = require("../acc/protect-middleware");
 // const ecies = require("ecies-geth");
 
 router.post("/decrypt-data", authen, async (req, res) => {

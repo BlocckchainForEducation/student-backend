@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { authen } = require("../../user-mng/permission/protect-middleware");
-const connection = require("../../../db");
-const { DB_NAME } = require("../../../constance");
+const { authen } = require("../acc/protect-middleware");
+const connection = require("../../db");
 const COLL_NAME = "SawtoothAccounts";
 
 router.get("/sawtooth-accounts", authen, async (req, res) => {
   try {
-    const col = (await connection).db(DB_NAME).collection(COLL_NAME);
+    const col = (await connection).db().collection(COLL_NAME);
     const accs = await col.find({ uid: req.user.uid }).toArray();
     res.json(accs);
   } catch (error) {
@@ -17,7 +16,7 @@ router.get("/sawtooth-accounts", authen, async (req, res) => {
 
 router.post("/sawtooth-accounts", authen, async (req, res) => {
   try {
-    const col = (await connection).db(DB_NAME).collection(COLL_NAME);
+    const col = (await connection).db().collection(COLL_NAME);
     let newAcc = req.body;
     newAcc.uid = req.user.uid;
     if (newAcc.privateKey === "") {
@@ -32,7 +31,7 @@ router.post("/sawtooth-accounts", authen, async (req, res) => {
 
 router.delete("/sawtooth-accounts", authen, async (req, res) => {
   try {
-    const col = (await connection).db(DB_NAME).collection(COLL_NAME);
+    const col = (await connection).db().collection(COLL_NAME);
     const opResult = await col.deleteOne({ uid: req.user.uid, publicKey: req.body.publicKey });
     res.json(opResult.result);
   } catch (error) {

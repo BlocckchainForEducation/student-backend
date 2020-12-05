@@ -1,4 +1,4 @@
-const ecies = require("ecies-geth");
+// const ecies = require("ecies-geth");
 
 // TODO: talk to sawtooth api, then reformat to the schema front-end require
 async function fetchEncryptDataOfAccount(publicKeyHex) {
