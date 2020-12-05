@@ -7,10 +7,10 @@ require("dotenv").config();
 const cors = require("cors");
 app.use(cors());
 
-const accRouter = require("./routes/user-mng/acc/acc-mng-router");
+const accRouter = require("./routes/acc/acc-mng-router");
 app.use("/acc", accRouter);
 
-const studentRouter = require("./routes/student/student-router");
+const studentRouter = require("./routes/student-router");
 app.use("/student", studentRouter);
 
 app.listen(8001, () => {

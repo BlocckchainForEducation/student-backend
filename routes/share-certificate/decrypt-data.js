@@ -94,7 +94,7 @@ async function decryptSubjects(privateKey, subjects) {
           plain: {
             semester: "20161",
             codename: "MI1100",
-            name: "Giải Tích 1",
+            name: "Giải Tích " + i,
             credit: 3,
             halfSemesterPoint: "8",
             finalSemesterPoint: "9",

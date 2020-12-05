@@ -9,7 +9,7 @@ const { DB_NAME } = require("../../../constance");
 const PROFILE = "Profile";
 const { profileSchema } = require("./schema");
 
-router.get("/profile", authen, author(ROLE.STUDENT), async (req, res) => {
+router.get("/profile", authen, async (req, res) => {
   try {
     const col = (await connection).db(DB_NAME).collection(PROFILE);
     const profile = await col.findOne({ uid: req.user.uid });
@@ -19,7 +19,7 @@ router.get("/profile", authen, author(ROLE.STUDENT), async (req, res) => {
   }
 });
 
-router.post("/profile", authen, author(ROLE.STUDENT), async (req, res) => {
+router.post("/profile", authen, async (req, res) => {
   try {
     const { error } = profileSchema.validate(req.body, { abortEarly: false });
     if (error) {
@@ -41,7 +41,7 @@ router.post("/profile", authen, author(ROLE.STUDENT), async (req, res) => {
   }
 });
 
-router.post("/change-avatar", authen, author(ROLE.STUDENT), upload.single("avatar"), async (req, res) => {
+router.post("/change-avatar", authen, upload.single("avatar"), async (req, res) => {
   try {
     const col = (await connection).db(DB_NAME).collection(PROFILE);
     const imgBase64 = req.file.buffer.toString("base64");
