@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const upload = multer();
-const { authen, author } = require("../user-mng/permission/protect-middleware");
-const { ROLE } = require("../user-mng/role");
-const connection = require("../../db");
-const { DB_NAME } = require("../../constance");
+const { authen, author } = require("../../user-mng/permission/protect-middleware");
+const { ROLE } = require("../../user-mng/role");
+const connection = require("../../../db");
+const { DB_NAME } = require("../../../constance");
 const PROFILE = "Profile";
 const { profileSchema } = require("./schema");
 
