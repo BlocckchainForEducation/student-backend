@@ -24,7 +24,8 @@ const schema1 = {
 };
 
 // api2: getTxInfo: (input: blockid + txid + adress, ouput: schema2)
-const schema2: {
+const schema2 = {
+  ok: true, // true: blockchain has that tx, false: blockchain does not have that tx
   cipher: "ImhlYWRtYXN0ZXIiOiJIb8OgbmcgTWluaCBTxqFuIiwicmVnaXNubyI6IjEyNDMxIiwiZ2xvYmFs",
   timestamp: "12341234234",
 };
