@@ -22,27 +22,56 @@ async function decryptCert(privateKeyHex, certificate) {
   // const privateKeyBuffer = Buffer.from(privateKey, "hex");
   // const encryptedCertBuffer = Buffer.from(encryptedCert, "hex");
   // return JSON.parse((await ecies.decrypt(privateKeyBuffer, encryptedCertBuffer)).toString());
-  return {
-    plain: {
-      name: "Nguyễn Văn An",
-      birthday: "01/01/1998",
-      gender: "Nam",
-      university: "Đại học Bách Khoa Hà Nội",
-      faculty: "Công nghệ thông tin",
-      degree: "Kỹ sư",
-      gradyear: "2019",
-      level: "Giỏi",
-      eduform: "Chính quy",
-      issuelocation: "Hà Nội",
-      issuedate: "20/08/2019",
-      headmaster: "Hoàng Minh Sơn",
-      regisno: "12431",
-      globalregisno: "12341231431",
-    },
-    blockid: "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a0188",
-    txid: "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a0188",
-    address: "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a0188",
+
+  const response = {
+    address: "0xb27677b99155aeb1813e924c89b45689e5446967d373a0188",
+    versions: [
+      {
+        txid: "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a0",
+        timestamp: Date.now(),
+        active: Date.now() % 2 == 0,
+        plain: {
+          name: "Nguyễn Văn An",
+          birthday: "01/01/1998",
+          gender: "Nam",
+          university: "Đại học Bách Khoa Hà Nội",
+          faculty: "Công nghệ thông tin",
+          degree: "Kỹ sư",
+          gradyear: "2019",
+          level: "Giỏi",
+          eduform: "Chính quy",
+          issuelocation: "Hà Nội",
+          issuedate: "20/08/2019",
+          headmaster: "Hoàng Minh Sơn",
+          regisno: "12431",
+          globalregisno: "12341231431",
+        },
+      },
+      {
+        txid: "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967",
+        timestamp: Date.now() + 1000,
+        active: Date.now() % 2 == 0,
+        plain: {
+          name: "Nguyễn Văn An",
+          birthday: "01/01/1998",
+          gender: "Nam",
+          university: "Đại học Bách Khoa Hà Nội",
+          faculty: "Công nghệ thông tin",
+          degree: "Kỹ sư",
+          gradyear: "2019",
+          level: "Giỏi",
+          eduform: "Chính quy",
+          issuelocation: "Hà Nội",
+          issuedate: "20/08/2019",
+          headmaster: "Hoàng Minh Sơn",
+          regisno: "12431",
+          globalregisno: "12341231431",
+        },
+      },
+    ],
   };
+  response.versions.sort((a, b) => b.timestamp - a.timestamp);
+  return response;
 }
 
 async function decryptSubjects(privateKey, subjects) {
@@ -54,22 +83,27 @@ async function decryptSubjects(privateKey, subjects) {
   //     .map((decryptedSubjectBuffer) => decryptedSubjectBuffer.toString())
   //     .map((decryptedSujectString) => JSON.parse(decryptedSujectString));
   const subjectList = [];
-  for (let i = 0; i <= 50; i++) {
+  for (let i = 0; i <= 40; i++) {
     subjectList.push({
-      plain: {
-        semester: "20161",
-        codename: "MI1100",
-        name: "Giải Tích 1",
-        credit: 3,
-        halfSemesterPoint: "8",
-        finalSemesterPoint: "9",
-        rank: "A",
-        pointBase4: 4,
-        txid: "0x12a243c9879cd78a68a6fa",
-      },
-      blockid: "9155aeb456f52b30f1a36d2f589e5446967d373a0" + i,
-      txid: "0xb27677b99155aeb1813e924c89b456f52ba36d2f443a0188" + i,
       address: "55aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a" + i,
+      versions: [
+        {
+          txid: "0xb27677b99155aeb1813e924c89b456f52ba36d2f443a0188" + i,
+          timestamp: 12439849236,
+          active: true,
+          plain: {
+            semester: "20161",
+            codename: "MI1100",
+            name: "Giải Tích 1",
+            credit: 3,
+            halfSemesterPoint: "8",
+            finalSemesterPoint: "9",
+            rank: "A",
+            pointBase4: 4,
+            txid: "0x12a243c9879cd78a68a6fa",
+          },
+        },
+      ],
     });
   }
   return subjectList;
