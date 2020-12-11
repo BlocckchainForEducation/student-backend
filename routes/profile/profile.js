@@ -47,7 +47,7 @@ router.post("/change-avatar", authen, upload.single("avatar"), async (req, res) 
     const opResult = await col.updateOne({ uid: req.user.uid }, { $set: { imgSrc: imgSrc } }, { upsert: true });
     res.json(imgSrc);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(error.toString());
   }
 });
 

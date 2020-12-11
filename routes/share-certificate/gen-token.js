@@ -15,7 +15,7 @@ router.post("/gen-token", authen, async (req, res) => {
       res.status(400).json({ msg: "Cannot create token for revoked certificate!" });
     }
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(error.toString());
   }
 });
 

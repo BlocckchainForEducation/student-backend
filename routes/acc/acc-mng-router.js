@@ -65,7 +65,7 @@ router.post("/signin", upload.none(), async (req, res) => {
     res.json({ token: token });
   } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    res.status(500).json(error.toString());
   }
 });
 

@@ -10,7 +10,7 @@ router.get("/sawtooth-accounts", authen, async (req, res) => {
     const accs = await col.find({ uid: req.user.uid }).toArray();
     res.json(accs);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(error.toString());
   }
 });
 
@@ -19,23 +19,23 @@ router.post("/sawtooth-accounts", authen, async (req, res) => {
     const col = (await connection).db().collection(COLL_NAME);
     let newAcc = req.body;
     newAcc.uid = req.user.uid;
-    if (newAcc.privateKey === "") {
-      newAcc.privateKey = false;
+    if (newAcc.privateKeyHex === "") {
+      newAcc.privateKeyHex = false;
     }
     const opResult = await col.insertOne(newAcc);
     res.json(opResult);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(error.toString());
   }
 });
 
 router.delete("/sawtooth-accounts", authen, async (req, res) => {
   try {
     const col = (await connection).db().collection(COLL_NAME);
-    const opResult = await col.deleteOne({ uid: req.user.uid, publicKey: req.body.publicKey });
+    const opResult = await col.deleteOne({ uid: req.user.uid, publicKeyHex: req.body.publicKeyHex });
     res.json(opResult.result);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(error.toString());
   }
 });
 

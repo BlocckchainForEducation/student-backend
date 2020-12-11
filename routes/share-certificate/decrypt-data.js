@@ -14,7 +14,7 @@ router.post("/decrypt-data", authen, async (req, res) => {
     const subjects = await decryptSubjects(privateKeyHex, encryptData.subjects);
     res.json({ publicKeyHex: encryptData.publicKeyHex, certificate, subjects });
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(error.toString());
   }
 });
 
