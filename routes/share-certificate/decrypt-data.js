@@ -11,7 +11,7 @@ router.post("/decrypt-data", authen, async (req, res) => {
     const encryptData = req.body.encryptData;
     if (!privateKeyHex || !encryptData) return res.status(400).json("bad request, check body: privateKeyHex, encrpytData");
     let certificate;
-    if (encryptData.certificate) {
+    if (encryptData.certificate.versions) {
       certificate = await decryptCert(privateKeyHex, encryptData.certificate);
     }
     const subjects = await decryptSubjects(privateKeyHex, encryptData.subjects);
