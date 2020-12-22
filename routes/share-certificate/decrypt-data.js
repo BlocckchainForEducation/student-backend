@@ -10,7 +10,10 @@ router.post("/decrypt-data", authen, async (req, res) => {
     const publicKeyHex65 = Buffer.from(secp256k1.publicKeyCreate(Buffer.from(privateKeyHex, "hex"), false)).toString("hex");
     const encryptData = req.body.encryptData;
     if (!privateKeyHex || !encryptData) return res.status(400).json("bad request, check body: privateKeyHex, encrpytData");
-    const certificate = await decryptCert(privateKeyHex, encryptData.certificate);
+    let certificate;
+    if (encryptData.certificate) {
+      certificate = await decryptCert(privateKeyHex, encryptData.certificate);
+    }
     const subjects = await decryptSubjects(privateKeyHex, encryptData.subjects);
     res.json({ publicKeyHex: encryptData.publicKeyHex, publicKeyHex65, certificate, subjects });
   } catch (error) {
