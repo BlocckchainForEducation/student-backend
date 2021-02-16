@@ -32,7 +32,10 @@ router.post("/sawtooth-accounts", authen, async (req, res) => {
 router.delete("/sawtooth-accounts", authen, async (req, res) => {
   try {
     const col = (await connection).db().collection(COLL_NAME);
-    const opResult = await col.deleteOne({ uid: req.user.uid, publicKeyHex: req.body.publicKeyHex });
+    const opResult = await col.deleteOne({
+      uid: req.user.uid,
+      publicKeyHex: req.body.publicKeyHex,
+    });
     res.json(opResult.result);
   } catch (error) {
     res.status(500).json(error.toString());
