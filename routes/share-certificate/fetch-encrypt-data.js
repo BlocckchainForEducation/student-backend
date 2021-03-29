@@ -11,11 +11,12 @@ router.get("/encrypted-data", authen, async (req, res) => {
       const response = await axios.get("/student_data/" + publicKeyHex);
       res.json(response.data);
     } catch (error) {
-      if (error.response) return res.status(502).json({ msg: error.response.data.error });
+      if (error.response)
+        return res.status(502).json({ msg: error.response.data.error });
       else return res.status(502).json({ msg: error });
     }
   } catch (error) {
-    res.status(500).json(error.toString());
+    res.status(500).send(error);
   }
 });
 
@@ -38,18 +39,26 @@ async function fetchEncryptDataOfAccountMockup(publicKeyHex) {
     regisno: "12431",
     globalregisno: "12341231431",
   };
-  const cipher = (await ecies.encrypt(Buffer.from(publicKeyHex65, "hex"), Buffer.from(JSON.stringify(mockupCertificateData)))).toString("hex");
+  const cipher = (
+    await ecies.encrypt(
+      Buffer.from(publicKeyHex65, "hex"),
+      Buffer.from(JSON.stringify(mockupCertificateData))
+    )
+  ).toString("hex");
   const certificate = {
-    address: "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a0188",
+    address:
+      "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a0188",
     versions: [
       {
-        txid: "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a0188",
+        txid:
+          "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a0188",
         timestamp: 18979427394,
         active: true,
         cipher: cipher,
       },
       {
-        txid: "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a0189",
+        txid:
+          "0xb27677b99155aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a0189",
         timestamp: 18979427395,
         active: Math.floor(Math.random() * 10) % 2 == 0,
         cipher: cipher,
@@ -73,7 +82,13 @@ async function fetchEncryptDataOfAccountMockup(publicKeyHex) {
   }
 
   const ciphersBuf = await Promise.all(
-    mockupSubjectList.map(async (subject) => await ecies.encrypt(Buffer.from(publicKeyHex65, "hex"), Buffer.from(JSON.stringify(subject))))
+    mockupSubjectList.map(
+      async (subject) =>
+        await ecies.encrypt(
+          Buffer.from(publicKeyHex65, "hex"),
+          Buffer.from(JSON.stringify(subject))
+        )
+    )
   );
   const subjects = ciphersBuf.map((cipherBuf, index) => ({
     address: "55aeb1813e924c89b456f52b30f1a36d2f589e5446967d373a" + index,

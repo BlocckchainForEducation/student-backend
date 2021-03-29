@@ -10,7 +10,9 @@ const upload = multer();
 router.post("/signup", async (req, res) => {
   try {
     // validate submited data
-    const { error, value } = signUpSchema.validate(req.body, { abortEarly: false });
+    const { error, value } = signUpSchema.validate(req.body, {
+      abortEarly: false,
+    });
     if (error) {
       const errors = {};
       for (let err of error.details) {
@@ -22,7 +24,8 @@ router.post("/signup", async (req, res) => {
     // check if email exists
     const col = (await connection).db().collection(ACC_COLL_NAME);
     const emailExist = await col.findOne({ email: req.body.email });
-    if (emailExist) return res.status(400).json({ email: "Email already exists!" });
+    if (emailExist)
+      return res.status(400).json({ email: "Email already exists!" });
 
     // hash pw and save new acc to db
     const salt = await bcrypt.genSalt();
@@ -32,10 +35,13 @@ router.post("/signup", async (req, res) => {
     const result = await col.insertOne(req.body);
 
     //send back token
-    const token = jwt.sign({ uid: result.insertedId }, process.env.TOKEN_SECRET);
+    const token = jwt.sign(
+      { uid: result.insertedId },
+      process.env.TOKEN_SECRET
+    );
     res.json({ token: token });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send(error);
   }
 });
@@ -43,7 +49,9 @@ router.post("/signup", async (req, res) => {
 router.post("/signin", upload.none(), async (req, res) => {
   try {
     // validate
-    const { error, value } = signInSchema.validate(req.body, { abortEarly: false });
+    const { error, value } = signInSchema.validate(req.body, {
+      abortEarly: false,
+    });
     if (error) {
       const errors = {};
       for (let err of error.details) {
@@ -58,14 +66,15 @@ router.post("/signin", upload.none(), async (req, res) => {
     if (!acc) return res.status(400).json({ email: "Account doesn't exists!" });
 
     // check if pw is correct
-    if (!bcrypt.compareSync(req.body.password, acc.hashedPassword)) return res.status(400).json({ password: "Incorrect password!" });
+    if (!bcrypt.compareSync(req.body.password, acc.hashedPassword))
+      return res.status(400).json({ password: "Incorrect password!" });
 
     // send back a token
     const token = jwt.sign({ uid: acc._id }, process.env.TOKEN_SECRET);
     res.json({ token: token });
   } catch (error) {
-    console.log(error);
-    res.status(500).json(error.toString());
+    console.error(error);
+    res.status(500).send(error);
   }
 });
 

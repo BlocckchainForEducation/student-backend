@@ -7,18 +7,28 @@ const secp256k1 = require("secp256k1");
 router.post("/decrypt-data", authen, async (req, res) => {
   try {
     const privateKeyHex = req.body.privateKeyHex;
-    const publicKeyHex65 = Buffer.from(secp256k1.publicKeyCreate(Buffer.from(privateKeyHex, "hex"), false)).toString("hex");
+    const publicKeyHex65 = Buffer.from(
+      secp256k1.publicKeyCreate(Buffer.from(privateKeyHex, "hex"), false)
+    ).toString("hex");
     const encryptData = req.body.encryptData;
-    if (!privateKeyHex || !encryptData) return res.status(400).json("bad request, check body: privateKeyHex, encrpytData");
+    if (!privateKeyHex || !encryptData)
+      return res
+        .status(400)
+        .json("bad request, check body: privateKeyHex, encrpytData");
     let certificate;
     if (encryptData.certificate.versions) {
       certificate = await decryptCert(privateKeyHex, encryptData.certificate);
     }
     const subjects = await decryptSubjects(privateKeyHex, encryptData.subjects);
-    res.json({ publicKeyHex: encryptData.publicKeyHex, publicKeyHex65, certificate, subjects });
+    res.json({
+      publicKeyHex: encryptData.publicKeyHex,
+      publicKeyHex65,
+      certificate,
+      subjects,
+    });
   } catch (error) {
-    console.log(error);
-    res.status(500).json(error.toString());
+    console.error(error);
+    res.status(500).send(error);
   }
 });
 
@@ -52,7 +62,10 @@ async function decryptSubjects(privateKeyHex, encryptedSubjects) {
       return version;
     });
     const decryptedVersions = await Promise.all(promises);
-    const decryptedSuject = { ...encryptedSubject, versions: decryptedVersions };
+    const decryptedSuject = {
+      ...encryptedSubject,
+      versions: decryptedVersions,
+    };
     return decryptedSuject;
   });
   const decryptedSubjects = await Promise.all(subjectPromises);

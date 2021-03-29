@@ -10,7 +10,7 @@ router.get("/sawtooth-accounts", authen, async (req, res) => {
     const accs = await col.find({ uid: req.user.uid }).toArray();
     res.json(accs);
   } catch (error) {
-    res.status(500).json(error.toString());
+    res.status(500).send(error);
   }
 });
 
@@ -25,7 +25,7 @@ router.post("/sawtooth-accounts", authen, async (req, res) => {
     const opResult = await col.insertOne(newAcc);
     res.json(opResult);
   } catch (error) {
-    res.status(500).json(error.toString());
+    res.status(500).send(error);
   }
 });
 
@@ -38,7 +38,7 @@ router.delete("/sawtooth-accounts", authen, async (req, res) => {
     });
     res.json(opResult.result);
   } catch (error) {
-    res.status(500).json(error.toString());
+    res.status(500).send(error);
   }
 });
 
