@@ -1,74 +1,58 @@
 const express = require("express");
 const router = express.Router();
 const { authen } = require("../acc/protect-middleware");
-const ecies = require("ecies-geth");
-const secp256k1 = require("secp256k1");
+const { decrypt } = require("eciesjs");
 
-router.post("/decrypt-data", authen, async (req, res) => {
+router.post("/decrypt-eduprogram", authen, async (req, res) => {
   try {
     const privateKeyHex = req.body.privateKeyHex;
-    const publicKeyHex65 = Buffer.from(
-      secp256k1.publicKeyCreate(Buffer.from(privateKeyHex, "hex"), false)
-    ).toString("hex");
-    const encryptData = req.body.encryptData;
-    if (!privateKeyHex || !encryptData)
-      return res
-        .status(400)
-        .json("bad request, check body: privateKeyHex, encrpytData");
+    const encryptData = req.body.selectedEduProgram;
+    if (!privateKeyHex || !encryptData) return res.status(400).json("bad request, check body: privateKeyHex, encrpytData");
+
     let certificate;
-    if (encryptData.certificate.versions) {
+    if (encryptData.certificate?.versions) {
       certificate = await decryptCert(privateKeyHex, encryptData.certificate);
     }
     const subjects = await decryptSubjects(privateKeyHex, encryptData.subjects);
-    res.json({
-      publicKeyHex: encryptData.publicKeyHex,
-      publicKeyHex65,
-      certificate,
-      subjects,
-    });
+    return res.json({ certificate, subjects });
   } catch (error) {
     console.error(error);
-    res.status(500).send(error);
+    return res.status(500).send(error.toString());
   }
 });
 
-async function decryptCert(privateKeyHex, encryptedCertificate) {
-  const privateKeyBuffer = Buffer.from(privateKeyHex, "hex");
-  const promises = encryptedCertificate.versions.map(async (version) => {
+function decryptCert(privateKeyHex, encryptedCertificate) {
+  const versions = encryptedCertificate.versions.map((version) => {
     const cipherHex = version.cipher;
     const cipherBuff = Buffer.from(cipherHex, "hex");
-    const plainBuff = await ecies.decrypt(privateKeyBuffer, cipherBuff);
+    const plainBuff = decrypt(privateKeyHex, cipherBuff);
     const plainJsonString = plainBuff.toString();
     const plainObject = JSON.parse(plainJsonString);
     version.plain = plainObject;
     return version;
   });
-  const versions = await Promise.all(promises);
   const decryptedCert = { ...encryptedCertificate, versions: versions };
   return decryptedCert;
 }
 
-async function decryptSubjects(privateKeyHex, encryptedSubjects) {
-  const privateKeyBuffer = Buffer.from(privateKeyHex, "hex");
-  const subjectPromises = encryptedSubjects.map(async (encryptedSubject) => {
+function decryptSubjects(privateKeyHex, encryptedSubjects) {
+  const decryptedSubjects = encryptedSubjects.map((encryptedSubject) => {
     const versions = encryptedSubject.versions;
-    const promises = versions.map(async (version) => {
+    const decryptedVersions = versions.map((version) => {
       const cipherHex = version.cipher;
       const cipherBuff = Buffer.from(cipherHex, "hex");
-      const plainBuff = await ecies.decrypt(privateKeyBuffer, cipherBuff);
+      const plainBuff = decrypt(privateKeyHex, cipherBuff);
       const plainJsonString = plainBuff.toString();
       const plainObject = JSON.parse(plainJsonString);
       version.plain = plainObject;
       return version;
     });
-    const decryptedVersions = await Promise.all(promises);
     const decryptedSuject = {
       ...encryptedSubject,
       versions: decryptedVersions,
     };
     return decryptedSuject;
   });
-  const decryptedSubjects = await Promise.all(subjectPromises);
   return decryptedSubjects;
 }
 
