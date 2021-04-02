@@ -8,13 +8,11 @@ router.post("/gen-token", authen, async (req, res) => {
     const decryptedData = req.body;
     const versions = decryptedData.certificate.versions;
     versions.sort((a, b) => b.timestamp - a.timestamp);
-    if (versions[0].active) {
+    if (versions[0].type !== "revoke") {
       const token = jwt.sign(req.body, process.env.TOKEN_SECRET);
       res.json({ token });
     } else {
-      res
-        .status(400)
-        .json({ msg: "Cannot create token for revoked certificate!" });
+      res.status(400).json({ msg: "Cannot create token for revoked certificate!" });
     }
   } catch (error) {
     res.status(500).send(error);
