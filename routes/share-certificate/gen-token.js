@@ -7,8 +7,9 @@ router.post("/gen-token", authen, async (req, res) => {
   try {
     const decryptedData = req.body;
     const versions = decryptedData.certificate.versions;
-    versions.sort((a, b) => b.timestamp - a.timestamp);
-    if (versions[0].type !== "revoke") {
+    // do not sort still ok, we will use the last index of array for the newst version
+    // versions.sort((a, b) => b.timestamp - a.timestamp);
+    if (versions[versions.length - 1].type !== "revoke") {
       const token = jwt.sign(req.body, process.env.TOKEN_SECRET);
       res.json({ token });
     } else {
