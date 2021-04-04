@@ -15,6 +15,6 @@ app.use("/acc", accRouter);
 const studentRouter = require("./routes/student-router");
 app.use("/student", studentRouter);
 
-app.listen(8001, () => {
-  console.log("App listening on port 8001!");
+app.listen(8002, () => {
+  console.log("App listening on port 8002!");
 });
