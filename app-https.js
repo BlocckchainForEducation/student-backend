@@ -7,7 +7,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
 const axios = require("axios").default;
-axios.defaults.baseURL = process.env.REST_API_URL;
+axios.defaults.baseURL = process.env.STUDENT_API_PROVIDER;
 
 const cors = require("cors");
 app.use(cors());

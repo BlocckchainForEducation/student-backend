@@ -2,9 +2,9 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
+// require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` }); docker-compose will provide env_file
 const axios = require("axios").default;
-axios.defaults.baseURL = process.env.REST_API_URL;
+axios.defaults.baseURL = process.env.STUDENT_API_PROVIDER;
 
 const cors = require("cors");
 app.use(cors());
@@ -15,6 +15,8 @@ app.use("/acc", accRouter);
 const studentRouter = require("./routes/student-router");
 app.use("/student", studentRouter);
 
-app.listen(8002, () => {
-  console.log("App listening on port 8002!");
+const PORT = process.env.PORT || 8000;
+
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}!`);
 });
