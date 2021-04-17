@@ -15,7 +15,7 @@ app.use(cors());
 app.use("/acc", require("./routes/acc/acc-mng-router"));
 app.use("/student", require("./routes/student-router"));
 
-const PORT = process.env.PORT || 8002;
+const PORT = process.env.PORT || 8000;
 
 https
   .createServer(
