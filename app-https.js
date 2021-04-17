@@ -5,7 +5,7 @@ var fs = require("fs");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
+// require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
 const axios = require("axios").default;
 axios.defaults.baseURL = process.env.STUDENT_API_PROVIDER;
 
@@ -20,8 +20,8 @@ const PORT = process.env.PORT || 8002;
 https
   .createServer(
     {
-      key: fs.readFileSync("/etc/letsencrypt/live/student-backend.b4e.vn/privkey.pem"),
-      cert: fs.readFileSync("/etc/letsencrypt/live/student-backend.b4e.vn/fullchain.pem"),
+      key: fs.readFileSync("/etc/letsencrypt/live/student-backend.b4e.vn/privkey.pem"), // need bind mount
+      cert: fs.readFileSync("/etc/letsencrypt/live/student-backend.b4e.vn/fullchain.pem"), // need bind mount
     },
     app
   )
