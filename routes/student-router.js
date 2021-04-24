@@ -1,19 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-const profileRouter = require("./profile/profile");
-router.use(profileRouter);
+router.use(require("./profile/profile"));
 
-const sawtoothAccsRouter = require("./sawtooth-acc/sawtooth-accs");
-router.use(sawtoothAccsRouter);
+router.use(require("./sawtooth-acc/sawtooth-accs"));
 
-const fetchEncryptData = require("./share-certificate/fetch-encrypt-data");
-router.use(fetchEncryptData);
+router.use(require("./share-certificate/fetch-encrypt-data"));
 
-const decryptData = require("./share-certificate/decrypt-data");
-router.use(decryptData);
+router.use(require("./share-certificate/decrypt-data"));
 
-const genToken = require("./share-certificate/gen-token");
-router.use(genToken);
+router.use(require("./share-certificate/gen-token"));
+
+router.use(require("./share-cv"));
 
 module.exports = router;
