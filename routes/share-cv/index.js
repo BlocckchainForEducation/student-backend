@@ -3,8 +3,10 @@ const router = express.Router();
 const { authen } = require("../acc/protect-middleware");
 const connection = require("../../db");
 const axios = require("axios").default;
+const { decryptCert, decryptSubjects } = require("../utils");
+const { decrypt } = require("eciesjs");
 
-router.get("/accounts-profile", authen, async (req, res) => {
+router.get("/account-profiles", authen, async (req, res) => {
   try {
     const accColl = (await connection).db().collection("SawtoothAccounts");
     const accs = await accColl.find({ uid: req.user.uid }).toArray();
@@ -25,6 +27,42 @@ router.get("/accounts-profile", authen, async (req, res) => {
     return res.status(500).send(error.toString());
   }
 });
+
+router.post("/decrypt-account-profile", async (req, res) => {
+  try {
+    const privateKeyHex = req.body.privateKeyHex;
+    const encryptedAccountProfile = req.body.encryptedAccountProfile;
+    const jobs = decryptJobs(privateKeyHex, encryptedAccountProfile.jobs);
+    const eduPrograms = decryptedEduprograms(privateKeyHex, encryptedAccountProfile.eduPrograms);
+    return { account: encryptedAccountProfile.account, jobs, eduPrograms };
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(error);
+  }
+});
+
+function decryptJobs(privateKeyHex, jobs) {
+  return jobs.map((job) => {
+    const cipherHex = job.start.cipher;
+    const cipherBuff = Buffer.from(cipherHex, "hex");
+    const plainBuff = decrypt(privateKeyHex, cipherBuff);
+    const plainJsonString = plainBuff.toString();
+    const plainObject = JSON.parse(plainJsonString);
+    const cloneJob = { ...job };
+    cloneJob.start.plain = plainObject;
+    return cloneJob;
+  });
+}
+function decryptedEduprograms(privateKeyHex, eduPrograms) {
+  return eduPrograms.map((eduProgram) => {
+    let certificate;
+    if (eduProgram.certificate?.versions) {
+      certificate = decryptCert(privateKeyHex, eduProgram.certificate);
+    }
+    const subjects = decryptSubjects(privateKeyHex, eduProgram.subjects);
+    return { ...eduProgram, certificate, subjects };
+  });
+}
 
 async function getMockupResponse(publicKeyHex) {
   return {
